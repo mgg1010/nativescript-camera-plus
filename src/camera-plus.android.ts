@@ -1371,12 +1371,13 @@ export class CameraPlus extends CameraPlusBase {
     let shouldKeepAspectRatio;
     let shouldAutoSquareCrop = this.autoSquareCrop;
 
-    const density = utils.layout.getDisplayDensity();
+    // MG: No idea why the code used screen density as a scale factor?
+
     if (options) {
       confirmPic = options.confirm ? true : false;
       saveToGallery = options.saveToGallery ? true : false;
-      reqWidth = options.width ? options.width * density : 0;
-      reqHeight = options.height ? options.height * density : reqWidth;
+      reqWidth = options.width;
+      reqHeight = options.height ? options.height: reqWidth;
       shouldKeepAspectRatio = types.isNullOrUndefined(options.keepAspectRatio)
         ? true
         : options.keepAspectRatio;
@@ -1428,7 +1429,12 @@ export class CameraPlus extends CameraPlusBase {
 
     // We only need to generate a new image IF,
     // we are SQUARING the image, or the orientation needs to be fixed
-    if (shouldAutoSquareCrop || orientation > 1) {
+
+    // MG: In my case, I want it to downsample the image for any orientation
+    // because I don't want a huge picture.  The default settings of 1000x1000
+    // below is good for me.  Really that 1000x1000 should be the incoming target size
+
+    if (true) {
       // https://developer.android.com/topic/performance/graphics/load-bitmap.html
       const bitmapOptions = new android.graphics.BitmapFactory.Options();
       bitmapOptions.inJustDecodeBounds = true;
@@ -1503,7 +1509,7 @@ export class CameraPlus extends CameraPlusBase {
       CLog("compressing finalBmp...");
       finalBmp.compress(
         android.graphics.Bitmap.CompressFormat.JPEG,
-        100,
+        options.quality,
         outputStream
       );
 
@@ -1574,8 +1580,8 @@ export class CameraPlus extends CameraPlusBase {
 
       const asset = CamHelpers.assetFromPath(
         picturePath,
-        reqWidth,
-        reqHeight,
+        width,          // I'd like it to send back the asset with actual size, not desired size?
+        height,         // I guess previous code is assuming there will be another scale by the calling code
         shouldKeepAspectRatio
       );
 
@@ -1587,18 +1593,20 @@ export class CameraPlus extends CameraPlusBase {
         this._savePicture(nativeFile, data);
         const asset = CamHelpers.assetFromPath(
           picturePath,
-          reqWidth,
-          reqHeight,
+          width,          // I'd like it to send back the asset with actual size, not desired size?
+          height,         // I guess previous code is assuming there will be another scale by the calling code
           shouldKeepAspectRatio
         );
         this.sendEvent(CameraPlus.photoCapturedEvent, asset);
         return;
       }
 
+      _saveImageToDisk(nativeFile, data);
+
       const asset = CamHelpers.assetFromPath(
         picturePath,
-        reqWidth,
-        reqHeight,
+        width,          // I'd like it to send back the asset with actual size, not desired size?
+        height,         // I guess previous code is assuming there will be another scale by the calling code
         shouldKeepAspectRatio
       );
       this.sendEvent(CameraPlus.photoCapturedEvent, asset);
