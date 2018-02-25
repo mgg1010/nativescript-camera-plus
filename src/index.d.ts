@@ -246,12 +246,13 @@ export interface IVideoOptions {
   saveToGallery?: boolean;
   height?: number;
   width?: number;
+  quality?: number;     // BB: Allow us to send in quality setting
 }
 
 export interface IChooseOptions {
   width?: number;
   height?: number;
-  keepAspectRatio?: boolean;
+  keepAspectRatio?: boolean;  
 }
 
 export interface ICameraPlusEvents {
