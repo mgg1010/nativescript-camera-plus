@@ -1601,7 +1601,7 @@ export class CameraPlus extends CameraPlusBase {
         return;
       }
 
-      _saveImageToDisk(nativeFile, data);
+      this._saveImageToDisk(nativeFile, data);
 
       const asset = CamHelpers.assetFromPath(
         picturePath,
