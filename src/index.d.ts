@@ -239,6 +239,7 @@ export interface ICameraOptions {
   height?: number;
   width?: number;
   autoSquareCrop?: boolean;
+  quality: number;
 }
 
 export interface IVideoOptions {
@@ -252,7 +253,7 @@ export interface IVideoOptions {
 export interface IChooseOptions {
   width?: number;
   height?: number;
-  keepAspectRatio?: boolean;  
+  keepAspectRatio?: boolean;
 }
 
 export interface ICameraPlusEvents {
